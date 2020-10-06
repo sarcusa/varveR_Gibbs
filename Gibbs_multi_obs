@@ -1,0 +1,164 @@
+################
+#Gibbs model: to use in conjunction of COL_script and multiple_cores_observers. This file will create the RData file for each core to be used with the original Gibbs_slurm script.
+#
+# 23-09-20
+# S.H.Arcusa
+
+library("devtools")
+library("ggplot2")
+library(geoChronR)
+library("dplyr")
+library(plyr)
+library("lipdR")
+library(matrixStats)
+library(purrr)
+library(tictoc)
+
+file.sources = list.files("C:/Users/steph/Documents/varveR_steph/R/", 
+                          pattern="*.R$", full.names=TRUE, 
+                          ignore.case=TRUE)
+
+sapply(file.sources,source,.GlobalEnv)
+
+# Prepare data used by all observers
+# Note this calculates the bacon model using the IntCal20 curve.
+
+# Load radiocarbon and lead data contained in the LiPD file
+D <- readLipd("D:/OneDrive for Business/OneDrive - Northern Arizona University/PhD thesis/Varves/Columbine.Arcusa.2020.lpd")
+
+# Run the BACON model
+D <- runBacon(D,cutoff = 1e-10, lab.id.var = NULL, age.14c.var = "age14c", 
+              age.14c.uncertainty.var = "age14cuncertainty", 
+              age.uncertainty.var = "ageuncertainty", 
+              reservoir.age.14c.var = NULL, rejected.ages.var = NULL,
+              reservoir.age.14c.uncertainty.var = NULL)
+
+# Map the age ensemble to the data
+core = mapAgeEnsembleToPaleoData(D, paleo.meas.table.num = 1, age.var = "ageensemble") 
+
+# Retrieving the age density distributions
+# Prepare the 210Pb data
+PB_distribution <- core$chronData[[1]]$model[[1]]$distributionTable
+PB_probdens <- purrr::flatten(lapply(PB_distribution, function (x) x[c('probabilityDensity')]))
+PB_dens <- purrr::flatten(lapply(PB_probdens, function (x) x[c('values')]))
+PB_age <- purrr::flatten(lapply(PB_distribution, function (x) x[c('age')]))
+PB_age_values <- purrr::flatten(lapply(PB_age, function (x) x[c('values')]))
+# Combine 210Pb with 14C depths
+depths_14C <- as.numeric(unlist(purrr::flatten(lapply(PB_distribution, function (x) x[c('depth')]))))
+names(PB_dens) <- paste("depth_",depths_14C, sep = "")
+names(PB_age_values) <- paste("depth_",depths_14C, sep = "")
+# Prepare the 237Cs data
+Cs_age <- seq(-15,-10,length.out = 250)
+Cs_dens <-dnorm(Cs_age,-13,.25)
+Cs_depth <- 3.25*10
+Cs <- list(list(prop.table(Cs_dens),Cs_age,Cs_depth))
+# Subset the 210Pb data 
+PB_dens <- PB_dens[c(13:19)]
+PB_age_values <- PB_age_values[c(13:19)]
+depths_14C <- depths_14C[c(13:19)]
+# Prepare object containing 210Pb,237Cs,14Cs depths, densities and ages
+C14 <- list()
+l <- list()
+for(i in 1: length(depths_14C)){
+  
+  l[[1]] <- PB_dens[[i]]
+  l[[2]] <- PB_age_values[[i]]
+  l[[3]] <- depths_14C[i]*10
+  
+  C14[[i]] <- l
+}
+
+C14 <- c(Cs,C14)
+
+# Observer data
+
+# Charlotte
+col172 <- readVarveDirectory("D:/OneDrive for Business/OneDrive - Northern Arizona University/PhD thesis/Varves/Charlotte_counts/COL17-2/",varveTop = "left")
+col173 <- readVarveDirectory("D:/OneDrive for Business/OneDrive - Northern Arizona University/PhD thesis/Varves/Charlotte_counts/COL17-3/",varveTop = "left")
+
+o2 <- determineMarkerLayerOrder(col172)
+names(col172)[o2]
+o3 <- determineMarkerLayerOrder(col173)
+names(col173)[o3]
+
+col172_sequence <- combineSectionsByMarkerLayer(col172[o2])
+col173_sequence <- combineSectionsByMarkerLayer(col173[o3])
+
+col172_sequence <- calibrateCummulativeDepth(CombSeq = col172_sequence, topOfVarvedSequence = 0, botOfVarvedSequence = 1270)
+col173_sequence <- calibrateCummulativeDepth(CombSeq = col173_sequence, topOfVarvedSequence = 0, botOfVarvedSequence = 1230)
+
+# Use this to check if the algorithm works
+objectiveFunction(0,0,0,0,0,0,C14 = C14,col172_sequence, col173_sequence)
+
+nIt <- 1e6
+paramChain = matrix(NA,nrow = nIt,6)
+objChain = matrix(NA,nrow = nIt,6)
+paramChain[1,] = c(0.05,0.05,0.1,0.2,0.3,0.6)
+
+objChain[1,1] <-logObjFun(param = c(paramChain[1,1],paramChain[1,2],paramChain[1,3], paramChain[1,4],paramChain[1,5],paramChain[1,6]),C14,col172_sequence,col173_sequence)
+oldProb <- exp(objChain[1,1])
+objChain[1,] <- objChain[1,1]
+
+save.image(file = "C:/Users/steph/Documents/varveR_steph/Gibbs_observer1.RData")
+
+# Sela
+col172 <- readVarveDirectory("D:/OneDrive for Business/OneDrive - Northern Arizona University/PhD thesis/Varves/Sela counts/COL17-2/",varveTop = "left")
+col173 <- readVarveDirectory("D:/OneDrive for Business/OneDrive - Northern Arizona University/PhD thesis/Varves/Sela counts/COL17-3/",varveTop = "left")
+
+o2 <- determineMarkerLayerOrder(col172)
+names(col172)[o2]
+o3 <- determineMarkerLayerOrder(col173)
+names(col173)[o3]
+
+col172_sequence <- combineSectionsByMarkerLayer(col172[o2])
+col173_sequence <- combineSectionsByMarkerLayer(col173[o3])
+
+col172_sequence <- calibrateCummulativeDepth(CombSeq = col172_sequence, topOfVarvedSequence = 0, botOfVarvedSequence = 1270)
+col173_sequence <- calibrateCummulativeDepth(CombSeq = col173_sequence, topOfVarvedSequence = 0, botOfVarvedSequence = 1230)
+
+# Use this to check if the algorithm works
+objectiveFunction(0,0,0,0,0,0,C14 = C14,col172_sequence, col173_sequence)
+logObjFun(param = c(0.01,0.01,0,0.1,0,0.25),C14,col172_sequence, col173_sequence)
+
+
+nIt <- 1e6
+paramChain = matrix(NA,nrow = nIt,6)
+objChain = matrix(NA,nrow = nIt,6)
+paramChain[1,] = c(0.05,0.05,0.1,0.2,0.3,0.6)
+
+objChain[1,1] <-logObjFun(param = c(paramChain[1,1],paramChain[1,2],paramChain[1,3], paramChain[1,4],paramChain[1,5],paramChain[1,6]),C14,col172_sequence,col173_sequence)
+oldProb <- exp(objChain[1,1])
+objChain[1,] <- objChain[1,1]
+
+save.image(file = "C:/Users/steph/Documents/varveR_steph/Gibbs_observer2.RData")
+
+# Steph
+col172 <- readVarveDirectory("D:/OneDrive for Business/OneDrive - Northern Arizona University/PhD thesis/Varves/Steph_counts/COL17-2/",varveTop = "left")
+col173 <- readVarveDirectory("D:/OneDrive for Business/OneDrive - Northern Arizona University/PhD thesis/Varves/Steph_counts/COL17-3/",varveTop = "left")
+
+o2 <- determineMarkerLayerOrder(col172)
+names(col172)[o2]
+o3 <- determineMarkerLayerOrder(col173)
+names(col173)[o3]
+
+col172_sequence <- combineSectionsByMarkerLayer(col172[o2])
+col173_sequence <- combineSectionsByMarkerLayer(col173[o3])
+
+col172_sequence <- calibrateCummulativeDepth(CombSeq = col172_sequence, topOfVarvedSequence = 0, botOfVarvedSequence = 1270)
+col173_sequence <- calibrateCummulativeDepth(CombSeq = col173_sequence, topOfVarvedSequence = 0, botOfVarvedSequence = 1230)
+
+# Use this to check if the algorithm works
+objectiveFunction(0,0,0,0,0,0,C14 = C14,col172_sequence, col173_sequence)
+logObjFun(param = c(0.01,0.01,0,0.1,0,0.25),C14,col172_sequence, col173_sequence)
+
+
+nIt <- 1e6
+paramChain = matrix(NA,nrow = nIt,6)
+objChain = matrix(NA,nrow = nIt,6)
+paramChain[1,] = c(0.05,0.05,0.1,0.2,0.3,0.6)
+
+objChain[1,1] <-logObjFun(param = c(paramChain[1,1],paramChain[1,2],paramChain[1,3], paramChain[1,4],paramChain[1,5],paramChain[1,6]),C14,col172_sequence,col173_sequence)
+oldProb <- exp(objChain[1,1])
+objChain[1,] <- objChain[1,1]
+
+save.image(file = "C:/Users/steph/Documents/varveR_steph/Gibbs_observer3.RData")
