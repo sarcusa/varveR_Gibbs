@@ -1166,6 +1166,8 @@ AS.O1.r <- as.vector(M1$quants) #[,5]-M1$quants[,1]
 AS.O2.r <- as.vector(M2$quants) #[,5]-M2$quants[,1]
 AS.O3.r <- as.vector(M3$quants) #[,5]-M3$quants[,1]
 
+save.image(file = "C:/Users/steph/Documents/varveR_steph/multiple_cores_observers_workstation_1.RData")
+
 # Now the script switches to producing the files necessary to run the gibbs model for each observer.
 
 library("devtools")
@@ -1322,6 +1324,8 @@ oldProb <- exp(objChain[1,1])
 objChain[1,] <- objChain[1,1]
 
 save.image(file = "C:/Users/steph/Documents/varveR_steph/Gibbs_observer3.RData")
+
+
 
 ### END of script ##
 # Now run Gibbs_slurm script 
