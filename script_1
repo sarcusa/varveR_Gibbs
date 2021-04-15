@@ -1,5 +1,6 @@
 # Arcusa et al. Columbine Lake varve record
 # To be used in conjunction with data files
+# Script 1
 
 library("devtools")
 #install_github("nickmckay/varveR")
