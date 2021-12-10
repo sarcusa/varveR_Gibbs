@@ -1,6 +1,35 @@
 # Arcusa et al. Columbine Lake varve record
-# To be used in conjunction with data files
+# To be used in conjunction with data files. Runs for symmetrical and asymmetrical priors. Go through section by section manually.
+# Once completed, use the outputs called Gibbs_observer1.RData, Gibbs_observer2.RData, Gibbs_observer3.RData 
 # Script 1
+
+Rsourcedir = "" # Location of the source code files. These include file GibbsrRelatedFunctions.R, ImportFiles.R, plotting.R, simulateOverAndUnderCounting.R, varveModel.R
+resultsdir = "" # Folder location for the results
+
+lpdfile = "" # Change to point to LipD file. LipD file contains the data in a reuseable format. Available at https://doi.org/10.6084/m9.figshare.14417999.v1 
+figdir = "" # Folder location to save figures of age depth models
+CRSfile = "" # Point to CRS lead model file (txt), datasets available at https://doi.org/10.6084/m9.figshare.17156702
+CFCSfile = "" # Point to CFCS lead model file (txt),datasets available at https://doi.org/10.6084/m9.figshare.17156702
+CICfile = "" # Point to CIC lead model file (txt), datasets available at https://doi.org/10.6084/m9.figshare.17156702
+Csfile = "" # Point to raw cesium data (csv) available at https://doi.org/10.6084/m9.figshare.17157245
+
+# For observer 1
+Obs1dir_172 = "" # Location folder containing data from observer 1 core COL17-2. Data available at https://doi.org/10.6084/m9.figshare.14251400.v1
+Obs1dir_173 = "" # Location folder containing data from observer 1 core COL17-3. Data available at https://doi.org/10.6084/m9.figshare.14251400.v1
+output_obs1_172 = "" # PDF output name for observer 1 core COL17-2. Must end with .pdf
+output_obs1_173 = "" # PDF output name for observer 1 core COL17-3. Must end with .pdf
+
+# For observer 2
+Obs2dir_172 = "" # Location folder containing data from observer 2 core COL17-2. Data available at https://doi.org/10.6084/m9.figshare.14251400.v1
+Obs2dir_173 = "" # Location folder containing data from observer 2 core COL17-3. Data available at https://doi.org/10.6084/m9.figshare.14251400.v1
+output_obs2_172 = "" # PDF output name for observer 2 core COL17-2. Must end with .pdf
+output_obs2_173 = "" # PDF output name for observer 2 core COL17-3. Must end with .pdf
+
+# For observer 3
+Obs3dir_172 = "" # Location folder containing data from observer 3 core COL17-2. Data available at https://doi.org/10.6084/m9.figshare.14251400.v1
+Obs3dir_173 = "" # Location folder containing data from observer 3 core COL17-3. Data available at https://doi.org/10.6084/m9.figshare.14251400.v1
+output_obs3_172 = "" # PDF output name for observer 3 core COL17-2. Must end with .pdf
+output_obs3_173 = "" # PDF output name for observer 3 core COL17-3. Must end with .pdf
 
 library("devtools")
 #install_github("nickmckay/varveR")
@@ -26,7 +55,7 @@ TP_depth <- c(0,8.5,20,35,52,58,63.5,66.5,114.5,124.5) # from the core surface o
 # Read lipd file. LiPD file available on Figshare: 10.6084/m9.figshare.14417999
 # Lipd file must contain up to date chrondata table
 
-C <- readLipd("D:/OneDrive for Business/OneDrive - Northern Arizona University/PhD thesis/Varves/Columbine.Arcusa.2020.lpd")
+C <- readLipd(lpdfile)
 
 # Run bacon from the lipd file and up to date chrondata table
 
@@ -98,7 +127,7 @@ plot(plot.with.inset)
 # To extract the plum model only
 # Extract Lead data from Plum model
 
-D <- readLipd("D:/OneDrive for Business/OneDrive - Northern Arizona University/PhD thesis/Varves/Columbine.Arcusa.2020.lpd")
+D <- readLipd(lpdfile)
 D <- loadBaconOutput(D,site.name = D$dataSetName) # create a new model and select _101 (remember that the .out file provided by Marco needs to have the first column removed)
 D = mapAgeEnsembleToPaleoData(D)
 
@@ -168,8 +197,8 @@ plotSymmPriors(x, dir = "D:/OneDrive for Business/OneDrive - Northern Arizona Un
 # Data available here: 10.6084/m9.figshare.14251400
 # Download and change directory in code below
 
-col172 <- readVarveDirectory("D:/OneDrive for Business/OneDrive - Northern Arizona University/PhD thesis/Varves/Charlotte_counts/COL17-2/",varveTop = "left")
-col173 <- readVarveDirectory("D:/OneDrive for Business/OneDrive - Northern Arizona University/PhD thesis/Varves/Charlotte_counts/COL17-3/",varveTop = "left")
+col172 <- readVarveDirectory(Obs1dir_172 ,varveTop = "left")
+col173 <- readVarveDirectory(Obs1dir_173 ,varveTop = "left")
 
 o2 <- determineMarkerLayerOrder(col172)
 names(col172)[o2]
@@ -178,8 +207,8 @@ names(col173)[o3]
 
 #plot each section
 if(PlotOp == TRUE){
-plotSections(col172,output = "D:/OneDrive for Business/OneDrive - Northern Arizona University/PhD thesis/Varves/Results/COL17-2_charlotte.pdf")
-plotSections(col173,output = "D:/OneDrive for Business/OneDrive - Northern Arizona University/PhD thesis/Varves/Results/COL17-3_charlotte.pdf")
+plotSections(col172,output = output_obs1_172)
+plotSections(col173,output = output_obs1_173)
 }
 
 col172_sequence1 <- combineSectionsByMarkerLayer(col172[o2])
@@ -244,8 +273,8 @@ modeledVarves1 <- varveModel(ensList1, nSim = n, allMarkerLayers)
 
 # Observer 2 (repeat for each observer, changing the input data)
 
-col172 <- readVarveDirectory("D:/OneDrive for Business/OneDrive - Northern Arizona University/PhD thesis/Varves/Sela counts/COL17-2/",varveTop = "left")
-col173 <- readVarveDirectory("D:/OneDrive for Business/OneDrive - Northern Arizona University/PhD thesis/Varves/Sela counts/COL17-3/",varveTop = "left")
+col172 <- readVarveDirectory(Obs2dir_172,varveTop = "left")
+col173 <- readVarveDirectory(Obs2dir_173,varveTop = "left")
 
 o2 <- determineMarkerLayerOrder(col172)
 names(col172)[o2]
@@ -254,8 +283,8 @@ names(col173)[o3]
 
 #plot each section
 if(PlotOp == TRUE){
-plotSections(col172,output = "D:/OneDrive for Business/OneDrive - Northern Arizona University/PhD thesis/Varves/Results/COL17-2_Sela.pdf")
-plotSections(col173,output = "D:/OneDrive for Business/OneDrive - Northern Arizona University/PhD thesis/Varves/Results/COL17-3_Sela.pdf")
+plotSections(col172,output = output_obs2_172)
+plotSections(col173,output = output_obs2_173)
 }
 
 col172_sequence2 <- combineSectionsByMarkerLayer(col172[o2])
@@ -333,8 +362,8 @@ print(Vplot2)
 
 # Observer 3 (repeat for each observer, changing the input data)
 
-col172 <- readVarveDirectory("D:/OneDrive for Business/OneDrive - Northern Arizona University/PhD thesis/Varves/Steph_counts/COL17-2/",varveTop = "left")
-col173 <- readVarveDirectory("D:/OneDrive for Business/OneDrive - Northern Arizona University/PhD thesis/Varves/Steph_counts/COL17-3/",varveTop = "left")
+col172 <- readVarveDirectory(Obs3dir_172 ,varveTop = "left")
+col173 <- readVarveDirectory(Obs3dir_173 ,varveTop = "left")
 
 o2 <- determineMarkerLayerOrder(col172)
 names(col172)[o2]
@@ -343,8 +372,8 @@ names(col173)[o3]
 
 #plot each section
 if(PlotOp == TRUE){
-plotSections(col172,output = "D:/OneDrive for Business/OneDrive - Northern Arizona University/PhD thesis/Varves/Results/COL17-2_Steph.pdf")
-plotSections(col173,output = "D:/OneDrive for Business/OneDrive - Northern Arizona University/PhD thesis/Varves/Results/COL17-3_Steph.pdf")
+plotSections(col172,output = output_obs3_172 )
+plotSections(col173,output = output_obs3_173 )
 }
 
 col172_sequence3 <- combineSectionsByMarkerLayer(col172[o2])
@@ -531,7 +560,7 @@ ML <- ML %>%
  
 ML$PercentDiff <- PDC(ML$COL172, ML$COL173)
 
-write.csv(ML,file = "D:/OneDrive for Business/OneDrive - Northern Arizona University/PhD thesis/Varves/Results/marker_layer_201020.csv")
+write.csv(ML,file = paste0(resultsdir ,"marker_layer_201020.csv"))
 
 stable <- stats %>%
   filter(!varveCode %in% c(4,5,6))%>%
@@ -788,8 +817,8 @@ library("LaplacesDemon")
 
 # Observer 1 (use same data as for the symmetrical priors)
 
-col172 <- readVarveDirectory("D:/OneDrive for Business/OneDrive - Northern Arizona University/PhD thesis/Varves/Charlotte_counts/COL17-2/",varveTop = "left")
-col173 <- readVarveDirectory("D:/OneDrive for Business/OneDrive - Northern Arizona University/PhD thesis/Varves/Charlotte_counts/COL17-3/",varveTop = "left")
+col172 <- readVarveDirectory(Obs1dir_172 ,varveTop = "left")
+col173 <- readVarveDirectory(Obs1dir_173 ,varveTop = "left")
 
 o2 <- determineMarkerLayerOrder(col172)
 names(col172)[o2]
@@ -798,8 +827,8 @@ names(col173)[o3]
 
 #plot each section
 if(PlotOp == TRUE){
-  plotSections(col172,output = "D:/OneDrive for Business/OneDrive - Northern Arizona University/PhD thesis/Varves/Results/COL17-2_charlotte.pdf")
-  plotSections(col173,output = "D:/OneDrive for Business/OneDrive - Northern Arizona University/PhD thesis/Varves/Results/COL17-3_charlotte.pdf")
+  plotSections(col172,output = output_obs1_172 )
+  plotSections(col173,output = output_obs1_173 )
 }
 
 col172_sequence1 <- combineSectionsByMarkerLayer(col172[o2])
@@ -839,8 +868,8 @@ print(VAplot1)
 
 # Observer 2
 
-col172 <- readVarveDirectory("D:/OneDrive for Business/OneDrive - Northern Arizona University/PhD thesis/Varves/Sela counts/COL17-2/",varveTop = "left")
-col173 <- readVarveDirectory("D:/OneDrive for Business/OneDrive - Northern Arizona University/PhD thesis/Varves/Sela counts/COL17-3/",varveTop = "left")
+col172 <- readVarveDirectory(Obs2dir_172 ,varveTop = "left")
+col173 <- readVarveDirectory(Obs2dir_173 ,varveTop = "left")
 
 o2 <- determineMarkerLayerOrder(col172)
 names(col172)[o2]
@@ -849,8 +878,8 @@ names(col173)[o3]
 
 #plot each section
 if(PlotOp == TRUE){
-  plotSections(col172,output = "D:/OneDrive for Business/OneDrive - Northern Arizona University/PhD thesis/Varves/Results/COL17-2_Sela.pdf")
-  plotSections(col173,output = "D:/OneDrive for Business/OneDrive - Northern Arizona University/PhD thesis/Varves/Results/COL17-3_Sela.pdf")
+  plotSections(col172,output = output_obs2_172 )
+  plotSections(col173,output = output_obs2_173 )
 }
 
 col172_sequence2 <- combineSectionsByMarkerLayer(col172[o2])
@@ -890,8 +919,8 @@ print(VAplot2)
 
 # Observer 3
 
-col172 <- readVarveDirectory("D:/OneDrive for Business/OneDrive - Northern Arizona University/PhD thesis/Varves/Steph_counts/COL17-2/",varveTop = "left")
-col173 <- readVarveDirectory("D:/OneDrive for Business/OneDrive - Northern Arizona University/PhD thesis/Varves/Steph_counts/COL17-3/",varveTop = "left")
+col172 <- readVarveDirectory(Obs3dir_172 ,varveTop = "left")
+col173 <- readVarveDirectory(Obs3dir_173 ,varveTop = "left")
 
 o2 <- determineMarkerLayerOrder(col172)
 names(col172)[o2]
@@ -900,8 +929,8 @@ names(col173)[o3]
 
 #plot each section
 if(PlotOp == TRUE){
-  plotSections(col172,output = "D:/OneDrive for Business/OneDrive - Northern Arizona University/PhD thesis/Varves/Results/COL17-2_Steph.pdf")
-  plotSections(col173,output = "D:/OneDrive for Business/OneDrive - Northern Arizona University/PhD thesis/Varves/Results/COL17-3_Steph.pdf")
+  plotSections(col172,output = output_obs3_172)
+  plotSections(col173,output = output_obs3_173)
 }
 
 col172_sequence3 <- combineSectionsByMarkerLayer(col172[o2])
@@ -1167,7 +1196,7 @@ AS.O1.r <- as.vector(M1$quants) #[,5]-M1$quants[,1]
 AS.O2.r <- as.vector(M2$quants) #[,5]-M2$quants[,1]
 AS.O3.r <- as.vector(M3$quants) #[,5]-M3$quants[,1]
 
-save.image(file = "C:/Users/steph/Documents/varveR_steph/multiple_cores_observers_workstation_1.RData")
+save.image(file = paste0(resultsdir,"multiple_cores_observers_workstation_1.RData"))
 
 # Now the script switches to producing the files necessary to run the gibbs model for each observer.
 
@@ -1185,7 +1214,7 @@ library(tictoc)
 # Note this calculates the bacon model using the IntCal20 curve.
 
 # Load radiocarbon and lead data contained in the LiPD file
-D <- readLipd("D:/OneDrive for Business/OneDrive - Northern Arizona University/PhD thesis/Varves/Columbine.Arcusa.2020.lpd")
+D <- readLipd(lpdfile)
 
 # Run the BACON model
 D <- runBacon(D,cutoff = 1e-10, lab.id.var = NULL, age.14c.var = "age14c",               age.14c.uncertainty.var = "age14cuncertainty", 
@@ -1234,8 +1263,8 @@ C14 <- c(Cs,C14)
 
 # Observer 1
 
-col172 <- readVarveDirectory("D:/OneDrive for Business/OneDrive - Northern Arizona University/PhD thesis/Varves/Charlotte_counts/COL17-2/",varveTop = "left")
-col173 <- readVarveDirectory("D:/OneDrive for Business/OneDrive - Northern Arizona University/PhD thesis/Varves/Charlotte_counts/COL17-3/",varveTop = "left")
+col172 <- readVarveDirectory(Obs1dir_172 ,varveTop = "left")
+col173 <- readVarveDirectory(Obs1dir_173 ,varveTop = "left")
 
 o2 <- determineMarkerLayerOrder(col172)
 names(col172)[o2]
@@ -1264,8 +1293,8 @@ save.image(file = "C:/Users/steph/Documents/varveR_steph/Gibbs_observer1.RData")
 
 # Observer 2
 
-col172 <- readVarveDirectory("D:/OneDrive for Business/OneDrive - Northern Arizona University/PhD thesis/Varves/Sela counts/COL17-2/",varveTop = "left")
-col173 <- readVarveDirectory("D:/OneDrive for Business/OneDrive - Northern Arizona University/PhD thesis/Varves/Sela counts/COL17-3/",varveTop = "left")
+col172 <- readVarveDirectory(Obs2dir_172 ,varveTop = "left")
+col173 <- readVarveDirectory(Obs2dir_173 ,varveTop = "left")
 
 o2 <- determineMarkerLayerOrder(col172)
 names(col172)[o2]
@@ -1292,12 +1321,12 @@ objChain[1,1] <-logObjFun(param = c(paramChain[1,1],paramChain[1,2],paramChain[1
 oldProb <- exp(objChain[1,1])
 objChain[1,] <- objChain[1,1]
 
-save.image(file = "C:/Users/steph/Documents/varveR_steph/Gibbs_observer2.RData")
+save.image(file = paste0(resultsdir ,"Gibbs_observer2.RData"))
 
 # Observer 3
 
-col172 <- readVarveDirectory("D:/OneDrive for Business/OneDrive - Northern Arizona University/PhD thesis/Varves/Steph_counts/COL17-2/",varveTop = "left")
-col173 <- readVarveDirectory("D:/OneDrive for Business/OneDrive - Northern Arizona University/PhD thesis/Varves/Steph_counts/COL17-3/",varveTop = "left")
+col172 <- readVarveDirectory(Obs3dir_172 ,varveTop = "left")
+col173 <- readVarveDirectory(Obs3dir_173 ,varveTop = "left")
 
 o2 <- determineMarkerLayerOrder(col172)
 names(col172)[o2]
@@ -1324,7 +1353,7 @@ objChain[1,1] <-logObjFun(param = c(paramChain[1,1],paramChain[1,2],paramChain[1
 oldProb <- exp(objChain[1,1])
 objChain[1,] <- objChain[1,1]
 
-save.image(file = "C:/Users/steph/Documents/varveR_steph/Gibbs_observer3.RData")
+save.image(file = paste0(resultsdir ,"Gibbs_observer3.RData"))
 
 
 
