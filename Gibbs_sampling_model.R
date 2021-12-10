@@ -1,8 +1,13 @@
 ######
-# Original gibbs model for one core
+# Original gibbs model algorithm for one core and one observer
 #
 # S. Arcusa 
 # 17-04-2020
+
+lpdfile = "" # LipD file for COlumbine Lake. Available at https://doi.org/10.6084/m9.figshare.14417999
+Obs3dir_172 = "" # Location folder containing data from observer 3 core COL17-2. Data available at https://doi.org/10.6084/m9.figshare.14251400.v1
+Obs3dir_173 = "" # Location folder containing data from observer 3 core COL17-3. Data available at https://doi.org/10.6084/m9.figshare.14251400.v1
+outputdir = "" # Folder location for output figures and output workstation
 
 library("devtools")
 library("varveR")
@@ -17,7 +22,7 @@ library(tictoc)
 
 
 # Load radiocarbon and lead data contained in the LiPD file
-D <- readLipd("D:/OneDrive for Business/OneDrive - Northern Arizona University/PhD thesis/Varves/Columbine.Arcusa.2020.lpd")
+D <- readLipd(lpdfile)
 
 # Run the BACON model
 D <- runBacon(D,cutoff = 1e-10, lab.id.var = NULL, age.14c.var = "age14c", 
@@ -81,8 +86,8 @@ plot(chron.plot)
 
 ## Load varve data for each core
 
-col172 <- readVarveDirectory("D:/OneDrive for Business/OneDrive - Northern Arizona University/PhD thesis/Varves/Steph_counts/COL17-2/",varveTop = "left")
-col173 <- readVarveDirectory("D:/OneDrive for Business/OneDrive - Northern Arizona University/PhD thesis/Varves/Steph_counts/COL17-3/",varveTop = "left")
+col172 <- readVarveDirectory(Obs3dir_172,varveTop = "left")
+col173 <- readVarveDirectory(Obs3dir_173,varveTop = "left")
 
 o2 <- determineMarkerLayerOrder(col172)
 names(col172)[o2]
@@ -352,13 +357,13 @@ for(i in 2:2){ #choose here if running loop in segments
   q <- seq(0,nIt,1000)
   if(i %in% q){
     
-    save.image("~/Varves/Gibbs_sampler/gibbs_sampling_workstation.RData")
+    save.image(paste0(outputdir,"gibbs_sampling_workstation.RData"))
     
   }
   
 }
 
-save.image("~/Varves/Gibbs_sampler/gibbs_sampling_workstation.RData")
+save.image(paste0(outputdir,"gibbs_sampling_workstation.RData"))
 
 toc()
 
@@ -450,7 +455,7 @@ plot_Gibbs_results  <- function(obj,param,n, plot.save){
   # Plots the objective chain
   if(plot.save == TRUE){
     
-    pdf(file = "~/Varves/Gibbs_sampler/ObjChain_plot.pdf")
+    pdf(file = paste0(outputdir,"ObjChain_plot.pdf"))
     plot((obj[,1]),type = "l", xlim = c(0,n), 
          xlab = "# iterations", ylab = "Objective Function (log)")
     dev.off()
@@ -465,7 +470,7 @@ plot_Gibbs_results  <- function(obj,param,n, plot.save){
                      "Overcounting prob. varve ID3",
                      "Undercounting prob. varve ID3")
     
-    pdf(file = "~/Varves/Gibbs_sampler/ParamChain_plot.pdf")
+    pdf(file = paste0(outputdir,"ParamChain_plot.pdf"))
     par(mfrow = c(3,2))
     for(i in 1:6){
       plot(param[,i],type = "l",xlim = c(0,n), 
@@ -475,7 +480,7 @@ plot_Gibbs_results  <- function(obj,param,n, plot.save){
     
     tki <- seq(b,n,by = 1)
     
-    pdf(file = "~/Varves/Gibbs_sampler/HistParam_plot.pdf")
+    pdf(file = paste0(outputdir,"HistParam_plot.pdf"))
     par(mfrow = c(3,2))
     for(i in 1:6){
       hist(param[tki,i], xlab = names_param[i], main = "")
