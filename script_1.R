@@ -1,6 +1,6 @@
 # Arcusa et al. Columbine Lake varve record
 # To be used in conjunction with data files. Runs for symmetrical and asymmetrical priors. Go through section by section manually.
-# Once completed, use the outputs called Gibbs_observer1.RData, Gibbs_observer2.RData, Gibbs_observer3.RData 
+# Once completed, use the outputs called Gibbs_observer1.RData, Gibbs_observer2.RData, Gibbs_observer3.RData with Gibbs_slurm.R
 # Script 1
 
 Rsourcedir = "" # Location of the source code files. These include file GibbsrRelatedFunctions.R, ImportFiles.R, plotting.R, simulateOverAndUnderCounting.R, varveModel.R
