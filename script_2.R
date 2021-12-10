@@ -1,7 +1,7 @@
 # Arcusa et al Columbine Lake varve
 # Script 2
 # To be run after Gibbs slurm
-# Once Gibbs has run 50,000 times, resume here for individual observer results.
+# Once Gibbs has run 50,000 times, resume here for individual observer results. Will combine observers and cores.
 
 Rsourcedir = "" # Location of the source code files. These include file GibbsrRelatedFunctions.R, ImportFiles.R, plotting.R, simulateOverAndUnderCounting.R, varveModel.R
 Gibbsresultsdir = "" # Folder location for the Gibbs results
