@@ -1,5 +1,5 @@
 ######
-# Original gibbs model algorithm for one observer
+# Original gibbs model algorithm for one observer. Best to run this not too many iterations.
 #
 # S. Arcusa 
 # 17-04-2020
