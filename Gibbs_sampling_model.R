@@ -1,5 +1,5 @@
 ######
-# Original gibbs model algorithm for one core and one observer
+# Original gibbs model algorithm for one observer
 #
 # S. Arcusa 
 # 17-04-2020
