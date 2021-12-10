@@ -2,6 +2,25 @@
 # Script that prepares the data frames of laminations from multiple cores and observers. To be used in conjunction with "Gibbs_sampling_model.R" and "COL_script.R" for now. 
 
 Rsourcedir = "" # Location of the source code files. These include file GibbsrRelatedFunctions.R, ImportFiles.R, plotting.R, simulateOverAndUnderCounting.R, varveModel.R
+resultsdir = "" # Folder location for the results
+
+# For observer 1
+Obs1dir_172 = "" # Location folder containing data from observer 1 core COL17-2. Data available at https://doi.org/10.6084/m9.figshare.14251400.v1
+Obs1dir_173 = "" # Location folder containing data from observer 1 core COL17-3. Data available at https://doi.org/10.6084/m9.figshare.14251400.v1
+output_obs1_172 = "" # PDF output name for observer 1 core COL17-2. Must end with .pdf
+output_obs1_173 = "" # PDF output name for observer 1 core COL17-3. Must end with .pdf
+
+# For observer 2
+Obs2dir_172 = "" # Location folder containing data from observer 2 core COL17-2. Data available at https://doi.org/10.6084/m9.figshare.14251400.v1
+Obs2dir_173 = "" # Location folder containing data from observer 2 core COL17-3. Data available at https://doi.org/10.6084/m9.figshare.14251400.v1
+output_obs2_172 = "" # PDF output name for observer 2 core COL17-2. Must end with .pdf
+output_obs2_173 = "" # PDF output name for observer 2 core COL17-3. Must end with .pdf
+
+# For observer 3
+Obs3dir_172 = "" # Location folder containing data from observer 3 core COL17-2. Data available at https://doi.org/10.6084/m9.figshare.14251400.v1
+Obs3dir_173 = "" # Location folder containing data from observer 3 core COL17-3. Data available at https://doi.org/10.6084/m9.figshare.14251400.v1
+output_obs3_172 = "" # PDF output name for observer 3 core COL17-2. Must end with .pdf
+output_obs3_173 = "" # PDF output name for observer 3 core COL17-3. Must end with .pdf
 
 
 library("devtools")
@@ -16,7 +35,7 @@ library(purrr)
 library(tictoc)
 library('patchwork')
 
-file.sources = list.files("C:/Users/steph/Documents/varveR_steph/R/", 
+file.sources = list.files(Rsourcedir, 
                           pattern="*.R$", full.names=TRUE, 
                           ignore.case=TRUE)
 
@@ -25,10 +44,10 @@ sapply(file.sources,source,.GlobalEnv)
 n = 100
 PlotOp = F
 
-# Charlotte
+# Obs 1
 
-col172 <- readVarveDirectory("D:/OneDrive for Business/OneDrive - Northern Arizona University/PhD thesis/Varves/Charlotte_counts/COL17-2/",varveTop = "left")
-col173 <- readVarveDirectory("D:/OneDrive for Business/OneDrive - Northern Arizona University/PhD thesis/Varves/Charlotte_counts/COL17-3/",varveTop = "left")
+col172 <- readVarveDirectory(Obs1dir_172,varveTop = "left")
+col173 <- readVarveDirectory(Obs1dir_173,varveTop = "left")
 
 o2 <- determineMarkerLayerOrder(col172)
 names(col172)[o2]
@@ -37,8 +56,8 @@ names(col173)[o3]
 
 #plot each section
 if(PlotOp == TRUE){
-plotSections(col172,output = "D:/OneDrive for Business/OneDrive - Northern Arizona University/PhD thesis/Varves/Results/COL17-2_charlotte.pdf")
-plotSections(col173,output = "D:/OneDrive for Business/OneDrive - Northern Arizona University/PhD thesis/Varves/Results/COL17-3_charlotte.pdf")
+plotSections(col172,output = output_obs1_172)
+plotSections(col173,output = output_obs1_173)
 }
 
 col172_sequence1 <- combineSectionsByMarkerLayer(col172[o2])
@@ -86,10 +105,10 @@ calModeledVarves1 <- calibrateVarveModelDepth(data = modeledVarves1, botOfVarved
 Vplot1 <- plotVarveModel(calModeledVarves1)
 print(Vplot1)
 
-### Sela
+### Observer 2
 
-col172 <- readVarveDirectory("D:/OneDrive for Business/OneDrive - Northern Arizona University/PhD thesis/Varves/Sela counts/COL17-2/",varveTop = "left")
-col173 <- readVarveDirectory("D:/OneDrive for Business/OneDrive - Northern Arizona University/PhD thesis/Varves/Sela counts/COL17-3/",varveTop = "left")
+col172 <- readVarveDirectory(Obs2dir_172,varveTop = "left")
+col173 <- readVarveDirectory(Obs2dir_173,varveTop = "left")
 
 o2 <- determineMarkerLayerOrder(col172)
 names(col172)[o2]
@@ -98,8 +117,8 @@ names(col173)[o3]
 
 #plot each section
 if(PlotOp == TRUE){
-plotSections(col172,output = "D:/OneDrive for Business/OneDrive - Northern Arizona University/PhD thesis/Varves/Results/COL17-2_Sela.pdf")
-plotSections(col173,output = "D:/OneDrive for Business/OneDrive - Northern Arizona University/PhD thesis/Varves/Results/COL17-3_Sela.pdf")
+plotSections(col172,output = output_obs2_172)
+plotSections(col173,output = output_obs2_173)
 }
 
 col172_sequence2 <- combineSectionsByMarkerLayer(col172[o2])
@@ -147,10 +166,10 @@ calModeledVarves2 <- calibrateVarveModelDepth(data = modeledVarves2, botOfVarved
 Vplot2 <- plotVarveModel(calModeledVarves2)
 print(Vplot2)
 
-#Steph
+### Observer 3
 
-col172 <- readVarveDirectory("D:/OneDrive for Business/OneDrive - Northern Arizona University/PhD thesis/Varves/Steph_counts/COL17-2/",varveTop = "left")
-col173 <- readVarveDirectory("D:/OneDrive for Business/OneDrive - Northern Arizona University/PhD thesis/Varves/Steph_counts/COL17-3/",varveTop = "left")
+col172 <- readVarveDirectory(Obs3dir_172,varveTop = "left")
+col173 <- readVarveDirectory(Obs3dir_173,varveTop = "left")
 
 o2 <- determineMarkerLayerOrder(col172)
 names(col172)[o2]
@@ -159,8 +178,8 @@ names(col173)[o3]
 
 #plot each section
 if(PlotOp == TRUE){
-plotSections(col172,output = "D:/OneDrive for Business/OneDrive - Northern Arizona University/PhD thesis/Varves/Results/COL17-2_Steph.pdf")
-plotSections(col173,output = "D:/OneDrive for Business/OneDrive - Northern Arizona University/PhD thesis/Varves/Results/COL17-3_Steph.pdf")
+plotSections(col172,output = output_obs3_172)
+plotSections(col173,output = output_obs3_173)
 }
 
 col172_sequence3 <- combineSectionsByMarkerLayer(col172[o2])
@@ -240,8 +259,8 @@ core2 <- ggplot(COL173_all)+
 both_counts <- core1 + core2 + plot_layout(nrow = 1)
 both_counts
 
-ggsave(filename = "D:/OneDrive for Business/OneDrive - Northern Arizona University/PhD thesis/Varves/Results/all_cores_observer_counts.pdf", plot = both_counts)
-ggsave(filename = "D:/OneDrive for Business/OneDrive - Northern Arizona University/PhD thesis/Varves/Results/all_cores_observer_counts.png", plot = both_counts)
+ggsave(filename = paste0(resultsdir,"all_cores_observer_counts.pdf"), plot = both_counts)
+ggsave(filename = paste0(resultsdir,"all_cores_observer_counts.png"), plot = both_counts)
 
 # Varve quality plots
 
@@ -270,8 +289,8 @@ core2
 both_QC <-core1 + core2 + plot_layout(nrow = 2)
 both_QC
 
-ggsave(filename = "D:/OneDrive for Business/OneDrive - Northern Arizona University/PhD thesis/Varves/Results/all_cores_observer_QC.pdf", plot = both_QC)
-ggsave(filename = "D:/OneDrive for Business/OneDrive - Northern Arizona University/PhD thesis/Varves/Results/all_cores_observer_QC.png", plot = both_QC)
+ggsave(filename = paste0(resultsdir,"all_cores_observer_QC.pdf"), plot = both_QC)
+ggsave(filename = paste0(resultsdir,"all_cores_observer_QC.png"), plot = both_QC)
 
 # Compare age-depth models
 
@@ -281,8 +300,7 @@ output1 <- data.frame(Depth = round(Vplot1$data$depth[1:260],1), Age = round(201
 output2 <- data.frame(Depth = round(Vplot2$data$depth[1:260],1), Age = round(2018-Vplot2$data$c50[1:260],0))
 output3 <- data.frame(Depth = round(Vplot3$data$depth[1:260],1), Age = round(2018-Vplot1$data$c50[1:260],0))
 
-
-write.table(x = output, file = "D:/OneDrive for Business/OneDrive - Northern Arizona University/PhD thesis/Varves/Age-depth model/PLUM and BACON combi/serac/Cores/Columbine_210Pb/Columbine_210Pb_varves.txt", col.names = T, row.names = F)
+write.table(x = output, file = paste0(resultsdir,"Columbine_210Pb_varves.txt"), col.names = T, row.names = F)
 
 CompareAgeDepthPlot <- ggplot(AD.data)+
   geom_ribbon(aes(x = Depth,ymin = c2.5,ymax = c97.5, fill = Obs), alpha = 0.25)+
@@ -303,8 +321,8 @@ CompareAgeDepthPlot <- ggplot(AD.data)+
 
 CompareAgeDepthPlot
 
-ggsave(filename = "D:/OneDrive for Business/OneDrive - Northern Arizona University/PhD thesis/Varves/Results/all_age_depth_models.pdf", plot = CompareAgeDepthPlot)
-ggsave(filename = "D:/OneDrive for Business/OneDrive - Northern Arizona University/PhD thesis/Varves/Results/all_age_depth_models.png", plot = CompareAgeDepthPlot)
+ggsave(filename = paste0(resultsdir,"all_age_depth_models.pdf"), plot = CompareAgeDepthPlot)
+ggsave(filename = paste0(resultsdir,"all_age_depth_models.png"), plot = CompareAgeDepthPlot)
 
 ## Compare varveR model to raw counts
 
@@ -375,16 +393,11 @@ Obs3.plot <- AD.data %>%
 Obs123.plot <- cowplot::plot_grid(Obs1.plot,Obs2.plot, Obs3.plot,labels = c("A","B","C"), nrow = 1, align = "hv", vjust = 5.5)
 Obs123.plot
 
-ggsave(plot = Obs123.plot, "D:/OneDrive for Business/OneDrive - Northern Arizona University/PhD thesis/Varves/Results/Obs123.pdf")
-
-
-
-
-
+ggsave(plot = Obs123.plot, paste0(resultsdir,"Obs123.pdf"))
 
 #save.image(file = "C:/Users/steph/Documents/varveR_steph/multiple_cores_observers_workstation.RData")
 
-# Run COL_script for this to work
+# Must have Run COL_script for this to work
 
 compareVarveBacon <- Bacon.plot+
   geom_ribbon(aes(y = AD.data$Depth/10, xmin = AD.data$c2.5BP,xmax = AD.data$c97.5BP, fill = AD.data$Obs), alpha = .25)+
@@ -397,12 +410,12 @@ compareVarveBacon <- Bacon.plot+
 
 compareVarveBacon
 
-ggsave(filename = "D:/OneDrive for Business/OneDrive - Northern Arizona University/PhD thesis/Varves/Results/all_age_depth_models_plus_Bacon.pdf", plot = compareVarveBacon)
-ggsave(filename = "D:/OneDrive for Business/OneDrive - Northern Arizona University/PhD thesis/Varves/Results/all_age_depth_models_plus_Bacon.png", plot = compareVarveBacon)
+ggsave(filename = paste0(resultsdir,"all_age_depth_models_plus_Bacon.pdf"), plot = compareVarveBacon)
+ggsave(filename = paste0(resultsdir,"all_age_depth_models_plus_Bacon.png"), plot = compareVarveBacon)
   
 ## Statistics
 
-# column bind the core sequences instead, then add a column for the core name. then use dplyr to calculate the stats. That way can exclude ID 4,5,6? What to do with 4?
+# column bind the core sequences instead, then add a column for the core name. then use dplyr to calculate the stats. That way can exclude ID 4,5,6
 
 stats <- rbind(col172_sequence1, col172_sequence2, col172_sequence3,
                col173_sequence1,col173_sequence2,col173_sequence3)
@@ -447,7 +460,7 @@ ML <- data.frame(COL172 = c(ML.172.1,ML.172.2,ML.172.3),
 ML <- ML %>%
   mutate(Difference = COL172 - COL173)
  
-write.csv(ML,file = "D:/OneDrive for Business/OneDrive - Northern Arizona University/PhD thesis/Varves/Results/marker_layer.csv")
+write.csv(ML,file = paste0(resultsdir,"marker_layer.csv"))
 
 ### Varve code 6 analysis
 
@@ -486,7 +499,7 @@ stats %>%
 
 #### Missing laminations analysis
 
-pdf(file = "D:/OneDrive for Business/OneDrive - Northern Arizona University/PhD thesis/Varves/Results/basal_age_colours.pdf")
+pdf(file = paste0(resultsdir,"basal_age_colours.pdf"))
 par(mfrow = c(3,1))
 
 hist(apply(modeledVarves1[[2]][[2]]$thicks, FUN = function(x) min(which(is.na(x))), MARGIN = 2), col=rgb(1,0,0,0.5), main = "Observer 1", ylim = c(0,40), xlab = "",xlim = c(2000,4500))
@@ -532,7 +545,6 @@ varve.shift <- stats %>%
   dplyr::summarise(min.depth = min(cumulative),
                    max.depth = max(age)) 
   
-
 varve.shift
 
 stats %>%
@@ -549,34 +561,3 @@ stats %>%
                    age.meanCE = 2017-mean(age)) 
 
 varve.shift
-
-
-### Drafts
-
-# Plot the deviation of radiocarbon model from varve
-  
-load(file = "C:/Users/steph/Documents/varveR_steph/COL_script_workstation.R.RData")
-  
-compareVarveRadio <- data.frame(Depth = rep(radio.df$Depth,3), c2.5 = c(AD.binned1$matrix[,1],AD.binned2$matrix[,1],AD.binned3$matrix[,1]), c50 = c( AD.binned1$matrix[,3], AD.binned2$matrix[,3],AD.binned3$matrix[,3]), c97.5 = c(AD.binned1$matrix[,5],AD.binned2$matrix[,5],AD.binned3$matrix[,5]), Obs = c(rep("Obs1",length(AD.binned1$matrix[,1])), rep("Obs2",length(AD.binned2$matrix[,1])), rep("Obs3",length(AD.binned3$matrix[,1]))))
-
-  radio <- C$chronData[[1]]$model[[2]]$summaryTable
-  radio.df <- data.frame(Depth = radio[[1]]$depth$values, c2.5 = radio[[1]]$age.rangeLow$values, c97.5 = radio[[1]]$age.rangeHigh$values, median = radio[[1]]$age$values)
-  
-  time.vector <- c(0,radio.df$Depth+0.5)*10
-  AD.binned1 <- binEns(time = Vplot$data$depth, values = -67+Vplot$data[,2:6],bin.vec = time.vector)
-  AD.binned2 <- binEns(time = Vplot2$data$depth, values = -67+Vplot2$data[,2:6],bin.vec = time.vector)
-  AD.binned3 <- binEns(time = Vplot3$data$depth, values = -67+Vplot3$data[,2:6],bin.vec = time.vector)
-  
-  deviation <- data.frame(Depth = rep(AD.binned1$time,3), VarveLow = c(AD.binned1$matrix[,1], AD.binned2$matrix[,1], AD.binned3$matrix[,3]), VarveMedian = c(AD.binned1$matrix[,3], AD.binned2$matrix[,3], AD.binned3$matrix[,3]), VarveHigh = c(AD.binned1$matrix[,5], AD.binned2$matrix[,5], AD.binned3$matrix[,5]), RadioLow = rep(radio.df$c2.5,3), RadioMedian = rep(radio.df$median,3), RadioHigh = rep(radio.df$c97.5,3), Obs = c(rep('Obs1', nrow(radio.df)), rep('Obs2', nrow(radio.df)), rep('Obs3', nrow(radio.df))))
-  deviation$Low = apply(deviation[, c("VarveLow","RadioLow")],1,sd)
-  deviation$High = apply(deviation[, c("VarveHigh","RadioHigh")],1,sd)
-  deviation$Median = apply(deviation[, c("VarveMedian","RadioMedian")],1,sd)
-  deviation$Low = deviation$VarveLow - deviation$RadioLow
-  deviation$High = deviation$VarveHigh - deviation$RadioHigh
-  deviation$Median = deviation$VarveMedian - deviation$RadioMedian
-  
-  ggplot(deviation)+
-    geom_line(aes(x = Depth, y = VarveMedian))+
-    geom_line(aes(x = Depth, y = RadioMedian))+
-    #geom_ribbon(aes(x = Depth,ymin = -Low,ymax = High))+
-    facet_grid(rows = vars(Obs))
