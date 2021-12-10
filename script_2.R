@@ -3,6 +3,35 @@
 # To be run after Gibbs slurm
 # Once Gibbs has run 50,000 times, resume here for individual observer results.
 
+Rsourcedir = "" # Location of the source code files. These include file GibbsrRelatedFunctions.R, ImportFiles.R, plotting.R, simulateOverAndUnderCounting.R, varveModel.R
+Gibbsresultsdir = "" # Folder location for the Gibbs results
+resultsdir = "" # Folder location for the results
+
+lpdfile = "" # Change to point to LipD file. LipD file contains the data in a reuseable format. Available at https://doi.org/10.6084/m9.figshare.14417999.v1 
+figdir = "" # Folder location to save figures of age depth models
+CRSfile = "" # Point to CRS lead model file (txt), datasets available at https://doi.org/10.6084/m9.figshare.17156702
+CFCSfile = "" # Point to CFCS lead model file (txt),datasets available at https://doi.org/10.6084/m9.figshare.17156702
+CICfile = "" # Point to CIC lead model file (txt), datasets available at https://doi.org/10.6084/m9.figshare.17156702
+Csfile = "" # Point to raw cesium data (csv) available at https://doi.org/10.6084/m9.figshare.17157245
+
+# For observer 1
+Obs1dir_172 = "" # Location folder containing data from observer 1 core COL17-2. Data available at https://doi.org/10.6084/m9.figshare.14251400.v1
+Obs1dir_173 = "" # Location folder containing data from observer 1 core COL17-3. Data available at https://doi.org/10.6084/m9.figshare.14251400.v1
+output_obs1_172 = "" # PDF output name for observer 1 core COL17-2. Must end with .pdf
+output_obs1_173 = "" # PDF output name for observer 1 core COL17-3. Must end with .pdf
+
+# For observer 2
+Obs2dir_172 = "" # Location folder containing data from observer 2 core COL17-2. Data available at https://doi.org/10.6084/m9.figshare.14251400.v1
+Obs2dir_173 = "" # Location folder containing data from observer 2 core COL17-3. Data available at https://doi.org/10.6084/m9.figshare.14251400.v1
+output_obs2_172 = "" # PDF output name for observer 2 core COL17-2. Must end with .pdf
+output_obs2_173 = "" # PDF output name for observer 2 core COL17-3. Must end with .pdf
+
+# For observer 3
+Obs3dir_172 = "" # Location folder containing data from observer 3 core COL17-2. Data available at https://doi.org/10.6084/m9.figshare.14251400.v1
+Obs3dir_173 = "" # Location folder containing data from observer 3 core COL17-3. Data available at https://doi.org/10.6084/m9.figshare.14251400.v1
+output_obs3_172 = "" # PDF output name for observer 3 core COL17-2. Must end with .pdf
+output_obs3_173 = "" # PDF output name for observer 3 core COL17-3. Must end with .pdf
+
 library("devtools")
 #install_github("nickmckay/varveR")
 #library("varveR")
@@ -17,17 +46,17 @@ library(LaplacesDemon)
 
 # Observer 1
 
-loadOneName(objName = "Bacon.plot", file = "C:/Users/steph/Documents/varveR_steph/multiple_cores_observers_workstation_1.RData")
+loadOneName(objName = "Bacon.plot", file = paste0(resultsdir,"multiple_cores_observers_workstation_1.RData"))
 
-load("D:/OneDrive for Business/OneDrive - Northern Arizona University/PhD thesis/Varves/Temp_Gibbs/Gibbs_observer1.RData")
+load(paste0(resultsdir,"Gibbs_observer1.RData"))
 
-plot_Gibbs_results(obj = objChain, param = paramChain, n = 25000, plot.save = F, obs = 1, dir = "D:/OneDrive for Business/OneDrive - Northern Arizona University/PhD thesis/Varves/Gibbs_results/Paper")
+plot_Gibbs_results(obj = objChain, param = paramChain, n = 25000, plot.save = F, obs = 1, dir = Gibbsresultsdir)
 
 tic()
-ages1 <- plot_varve_model_Gibbs(param = paramChain, obj = objChain, core1 = col172_sequence, core2 = col173_sequence, ind.plot = Bacon.plot, somedepths = depths_14C, it = 300,dir = "D:/OneDrive for Business/OneDrive - Northern Arizona University/PhD thesis/Varves/Gibbs_results/Paper",obs = 1,PlotOpt = F,burnOpt = F,burn = 100)
+ages1 <- plot_varve_model_Gibbs(param = paramChain, obj = objChain, core1 = col172_sequence, core2 = col173_sequence, ind.plot = Bacon.plot, somedepths = depths_14C, it = 300,dir = Gibbsresultsdir,obs = 1,PlotOpt = F,burnOpt = F,burn = 100)
 toc()
 
-loadOneName(objName = "col173_sequence1", file = "C:/Users/steph/Documents/varveR_steph/multiple_cores_observers_workstation_1.RData")
+loadOneName(objName = "col173_sequence1", file = paste0(resultsdir,"multiple_cores_observers_workstation_1.RData"))
 
 count <- seq_len(nrow(ages1$ThicksEns[[2]]))
 I1 <- plotTimeseriesEnsRibbons(X = -67+count, Y = as.matrix(ages1$ThicksEns[[2]]), probs = c(0.05,0.25,0.5,0.75,0.95), color.low = "#999999", color.high = "#999999", alp = 0.25,x.bin = -67:round(mean(apply(ages1$ThicksEns[[2]], FUN = function(x) min(which(is.na(x))), MARGIN = 2)),0), limit.outliers.x = T, export.quantiles = T)
@@ -37,15 +66,15 @@ I1.age2 <- as.data.frame(ages1$ageEns$summaryTable)
 
 #Observer 2
 
-load("D:/OneDrive for Business/OneDrive - Northern Arizona University/PhD thesis/Varves/Temp_Gibbs/Gibbs_observer2.RData")
+load(paste0(resultsdir,"Gibbs_observer2.RData"))
 
-plot_Gibbs_results(obj = objChain, param = paramChain, n = 50000, plot.save = T, obs = 2, dir = "D:/OneDrive for Business/OneDrive - Northern Arizona University/PhD thesis/Varves/Gibbs_results/")
+plot_Gibbs_results(obj = objChain, param = paramChain, n = 50000, plot.save = T, obs = 2, dir = Gibbsresultsdir)
 
 tic()
-ages2 <- plot_varve_model_Gibbs(param = paramChain, obj = objChain, core1 = col172_sequence, core2 = col173_sequence, ind.plot = Bacon.plot, somedepths = depths_14C, it = 300,dir = "D:/OneDrive for Business/OneDrive - Northern Arizona University/PhD thesis/Varves/Gibbs_results/",obs = 2,PlotOpt = T,burnOpt = T)
+ages2 <- plot_varve_model_Gibbs(param = paramChain, obj = objChain, core1 = col172_sequence, core2 = col173_sequence, ind.plot = Bacon.plot, somedepths = depths_14C, it = 300,dir = Gibbsresultsdir,obs = 2,PlotOpt = T,burnOpt = T)
 toc()
 
-loadOneName(objName = "col173_sequence2", file = "C:/Users/steph/Documents/varveR_steph/multiple_cores_observers_workstation_1.RData")
+loadOneName(objName = "col173_sequence2", file = paste0(resultsdir,"multiple_cores_observers_workstation_1.RData"))
 
 count <- seq_len(nrow(ages2$ThicksEns[[2]]))
 I2 <- plotTimeseriesEnsRibbons(X = -67+count, Y = as.matrix(ages2$ThicksEns[[2]]), probs = c(0.05,0.25,0.5,0.75,0.95), color.low = "#999999", color.high = "#999999", alp = 0.25,x.bin = -67:round(mean(apply(ages2$ThicksEns[[2]], FUN = function(x) min(which(is.na(x))), MARGIN = 2)),0), limit.outliers.x = T, export.quantiles = T)
@@ -56,15 +85,15 @@ I2.age2 <- as.data.frame(ages2$ageEns$summaryTable)
 
 # Observer 3
 
-load("D:/OneDrive for Business/OneDrive - Northern Arizona University/PhD thesis/Varves/Temp_Gibbs/Gibbs_observer3.RData")
+load(paste0(resultsdir,"Gibbs_observer3.RData"))
 
-plot_Gibbs_results(obj = objChain, param = paramChain, n = 50000, plot.save = T, obs = 3, dir = "D:/OneDrive for Business/OneDrive - Northern Arizona University/PhD thesis/Varves/Gibbs_results/")
+plot_Gibbs_results(obj = objChain, param = paramChain, n = 50000, plot.save = T, obs = 3, dir = Gibbsresultsdir)
 
 tic()
-ages3 <- plot_varve_model_Gibbs(param = paramChain, obj = objChain, core1 = col172_sequence, core2 = col173_sequence, ind.plot = Bacon.plot, somedepths = depths_14C, it = 300,dir = "D:/OneDrive for Business/OneDrive - Northern Arizona University/PhD thesis/Varves/Gibbs_results/",obs = 3,PlotOpt = T,burnOpt = F,burn = 50)
+ages3 <- plot_varve_model_Gibbs(param = paramChain, obj = objChain, core1 = col172_sequence, core2 = col173_sequence, ind.plot = Bacon.plot, somedepths = depths_14C, it = 300,dir = Gibbsresultsdir,obs = 3,PlotOpt = T,burnOpt = F,burn = 50)
 toc()
 
-loadOneName(objName = "col173_sequence3", file = "C:/Users/steph/Documents/varveR_steph/multiple_cores_observers_workstation_1.RData")
+loadOneName(objName = "col173_sequence3", file = paste0(resultsdir,"multiple_cores_observers_workstation_1.RData"))
 
 count <- seq_len(nrow(ages3$ThicksEns[[2]]))
 I3 <- plotTimeseriesEnsRibbons(X = -67+count, Y = as.matrix(ages3$ThicksEns[[2]]), probs = c(0.05,0.25,0.5,0.75,0.95), color.low = "#999999", color.high = "#999999", alp = 0.25,x.bin = -67:round(mean(apply(ages3$ThicksEns[[2]], FUN = function(x) min(which(is.na(x))), MARGIN = 2)),0), limit.outliers.x = T, export.quantiles = T)
@@ -88,23 +117,23 @@ library(HistogramTools)
 
 # Observer 1
 
-load("D:/OneDrive for Business/OneDrive - Northern Arizona University/PhD thesis/Varves/Temp_Gibbs/Gibbs_observer1.RData")
+load(paste0(resultsdir,"Gibbs_observer1.RData"))
 
 obs1 <- prepareObserverGibbs(param = paramChain, obj = objChain, core1 = col172_sequence, core2 = col173_sequence,it = 300,burnOpt = T)
 
 # Observer 2
 
-load("D:/OneDrive for Business/OneDrive - Northern Arizona University/PhD thesis/Varves/Temp_Gibbs/Gibbs_observer2.RData")
+load(paste0(resultsdir,"Gibbs_observer2.RData"))
 
 obs2 <- prepareObserverGibbs(param = paramChain, obj = objChain, core1 = col172_sequence, core2 = col173_sequence,it = 300,burnOpt = T)
 
 # Observer 3
 
-load("D:/OneDrive for Business/OneDrive - Northern Arizona University/PhD thesis/Varves/Temp_Gibbs/Gibbs_observer3.RData")
+load(paste0(resultsdir,"Gibbs_observer3.RData"))
 
 obs3 <- prepareObserverGibbs(param = paramChain, obj = objChain, core1 = col172_sequence, core2 = col173_sequence,it = 300,burnOpt = F, burn = 50)
 
-int <- CombineObserverGibbs(Thick = c(obs1[[1]],obs2[[1]],obs3[[1]]), Param = list(obs1[[2]],obs2[[2]],obs3[[2]][1:1000,]), high = list(obs1[[3]],obs2[[3]],obs3[[3]]), somedepths = depths_14C, ind.plot = Bacon.plot, PlotOpt = T, dir = "D:/OneDrive for Business/OneDrive - Northern Arizona University/PhD thesis/Varves/Gibbs_results/",original = c(0.05,0.05,0.1,0.2,0.3,0.6))
+int <- CombineObserverGibbs(Thick = c(obs1[[1]],obs2[[1]],obs3[[1]]), Param = list(obs1[[2]],obs2[[2]],obs3[[2]][1:1000,]), high = list(obs1[[3]],obs2[[3]],obs3[[3]]), somedepths = depths_14C, ind.plot = Bacon.plot, PlotOpt = T, dir = Gibbsresultsdir,original = c(0.05,0.05,0.1,0.2,0.3,0.6))
 
 # Stats
 # Integrated model 
@@ -124,7 +153,7 @@ Int.depth <- as.data.frame(do.call(cbind,lapply(Int.thick, `length<-`,max(indx))
 count <- seq_len(nrow(Int.depth))
 Int.rates.q <- plotTimeseriesEnsRibbons(X = -67+count, Y = as.matrix(Int.depth), probs = c(0.05,0.25,0.5,0.75,0.95), color.low = "#999999", color.high = "#999999", alp = 0.25,x.bin = -67:round(mean(apply(Int.depth, FUN = function(x) min(which(is.na(x))), MARGIN = 2)),0), limit.outliers.x = T, export.quantiles = T)
 
-loadOneName(objName = "AD.data", file = "C:/Users/steph/Documents/varveR_steph/multiple_cores_observers_workstation_1.RData")
+loadOneName(objName = "AD.data", file = paste0(resultsdir,"multiple_cores_observers_workstation_1.RData"))
 
 AD.data$Model <- c(rep("VarveR", nrow(AD.data)))
 
