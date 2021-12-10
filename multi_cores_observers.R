@@ -1,6 +1,9 @@
 ####
 # Script that prepares the data frames of laminations from multiple cores and observers. To be used in conjunction with "Gibbs_sampling_model.R" and "COL_script.R" for now. 
 
+Rsourcedir = "" # Location of the source code files. These include file GibbsrRelatedFunctions.R, ImportFiles.R, plotting.R, simulateOverAndUnderCounting.R, varveModel.R
+
+
 library("devtools")
 #library("varveR")
 library("ggplot2")
