@@ -298,7 +298,9 @@ ggsave(filename = paste0("final_chrono_plot_", Sys.Date(), ".png"), plot = final
 
 #### Now switch to multiple-cores-observer script
 #####
-## Drafts
+
+
+## Extra analyzes. Comment out.
 
 
 ind.AD <- convertBP2AD(core$chronData[[1]]$model[[2]]$ensembleTable[[1]]$ageEnsemble$values)
