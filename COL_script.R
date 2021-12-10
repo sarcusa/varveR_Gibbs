@@ -1,6 +1,13 @@
 ###############
 # Script for Columbine Paper. Plots age-depth models.
 
+lpdfile = "" # Change to point to LipD file. LipD file contains the data in a reuseable format. Available at https://doi.org/10.6084/m9.figshare.14417999.v1 
+figdir = "" # Folder location to save figures of age depth models
+CRSfile = "" # Point to CRS lead model file (txt), datasets available at https://doi.org/10.6084/m9.figshare.17156702
+CFCSfile = "" # Point to CFCS lead model file (txt),datasets available at https://doi.org/10.6084/m9.figshare.17156702
+CICfile = "" # Point to CIC lead model file (txt), datasets available at https://doi.org/10.6084/m9.figshare.17156702
+Csfile = "" # Point to raw cesium data (csv) available at https://doi.org/10.6084/m9.figshare.17157245
+
 library("devtools")
 #install_github("nickmckay/varveR")
 #library("varveR")
@@ -24,7 +31,7 @@ TP_depth <- c(0,8.5,20,35,52,58,63.5,66.5,114.5,124.5) # from the core surface o
 
 # Read lipd file. Lipd file must contain up to date chrondata table
 
-C <- readLipd("D:/OneDrive for Business/OneDrive - Northern Arizona University/PhD thesis/Varves/Columbine.Arcusa.2020.lpd")
+C <- readLipd(lpdfile)
 
 # Run bacon from the lipd file and up to date chrondata table
 
@@ -64,8 +71,8 @@ Bacon.plot = plotChron(C, model.num = 1, age.var = "ageensemble",
         panel.grid.minor = element_line(color = "grey70"))
 plot(Bacon.plot)
 
-ggsave(filename = paste0("COL_bacon_", Sys.Date(), ".pdf"), plot = Bacon.plot, device = "pdf", path = "D:/OneDrive for Business/OneDrive - Northern Arizona University/PhD thesis/Varves/Age-depth model/Figures/")
-ggsave(filename = paste0("COL_bacon_", Sys.Date(), ".png"), plot = Bacon.plot, device = "png", path = "D:/OneDrive for Business/OneDrive - Northern Arizona University/PhD thesis/Varves/Age-depth model/Figures/")
+ggsave(filename = paste0("COL_bacon_", Sys.Date(), ".pdf"), plot = Bacon.plot, device = "pdf", path = figdir)
+ggsave(filename = paste0("COL_bacon_", Sys.Date(), ".png"), plot = Bacon.plot, device = "png", path = figdir)
 
 # this plots bacon and plum combo with intcal13
 BaconPlum.plot = plotChron(C, model.num = 2, 
@@ -87,8 +94,8 @@ BaconPlum.plot = plotChron(C, model.num = 2,
         plot.background = element_rect(fill = "transparent", color = NA))
 plot(BaconPlum.plot)
 
-ggsave(filename = paste0("COL_BaconPlum_", Sys.Date(), ".pdf"), plot = BaconPlum.plot, device = "pdf", path = "D:/OneDrive for Business/OneDrive - Northern Arizona University/PhD thesis/Varves/Age-depth model/Figures/")
-ggsave(filename = paste0("COL_BaconPlum_", Sys.Date(), ".png"), plot = BaconPlum.plot, device = "png", path = "D:/OneDrive for Business/OneDrive - Northern Arizona University/PhD thesis/Varves/Age-depth model/Figures/")
+ggsave(filename = paste0("COL_BaconPlum_", Sys.Date(), ".pdf"), plot = BaconPlum.plot, device = "pdf", path = figdir)
+ggsave(filename = paste0("COL_BaconPlum_", Sys.Date(), ".png"), plot = BaconPlum.plot, device = "png", path = figdir)
 
 # Combining both plots
 
@@ -98,13 +105,16 @@ plot.with.inset <-
   draw_plot(BaconPlum.plot, x = 0.42, y = .097, width = .45, height = .45)
 plot(plot.with.inset)
 
-ggsave(filename = paste0("COL_BaconPlum_inset_", Sys.Date(), ".pdf"), plot = plot.with.inset, device = "pdf", path = "D:/OneDrive for Business/OneDrive - Northern Arizona University/PhD thesis/Varves/Age-depth model/Figures/")
-ggsave(filename = paste0("COL_BaconPlum_inset_", Sys.Date(), ".png"), plot = plot.with.inset, device = "png", path = "D:/OneDrive for Business/OneDrive - Northern Arizona University/PhD thesis/Varves/Age-depth model/Figures/")
+ggsave(filename = paste0("COL_BaconPlum_inset_", Sys.Date(), ".pdf"), plot = plot.with.inset, device = "pdf", path = figdir)
+ggsave(filename = paste0("COL_BaconPlum_inset_", Sys.Date(), ".png"), plot = plot.with.inset, device = "png", path = figdir)
 
 # To extract the plum model only
 # Extract Lead data from Plum model
 
-D <- readLipd("D:/OneDrive for Business/OneDrive - Northern Arizona University/PhD thesis/Varves/Columbine.Arcusa.2020.lpd")
+D <- readLipd(lpdfile)
+
+#Plum model output available at https://doi.org/10.6084/m9.figshare.14417999.v1 with file name COL17-3_66.out
+
 D <- loadBaconOutput(D,site.name = D$dataSetName) # create a new model and select _101 (remember that the .out file provided by Marco needs to have the first column removed)
 D = mapAgeEnsembleToPaleoData(D)
 
@@ -124,8 +134,8 @@ Plum.plot = plotChron(D, model.num = 1, age.var = "ageensemble",
   theme(legend.position="none", aspect.ratio = 1)
 plot(Plum.plot)
 
-ggsave(filename = paste0("COL_plum_", Sys.Date(), ".pdf"), plot = Plum.plot, device = "pdf", path = "D:/OneDrive for Business/OneDrive - Northern Arizona University/PhD thesis/Varves/Age-depth model/Figures/")
-ggsave(filename = paste0("COL_plum_", Sys.Date(), ".png"), plot = Plum.plot, device = "png", path = "D:/OneDrive for Business/OneDrive - Northern Arizona University/PhD thesis/Varves/Age-depth model/Figures/")
+ggsave(filename = paste0("COL_plum_", Sys.Date(), ".pdf"), plot = Plum.plot, device = "pdf", path = figdir)
+ggsave(filename = paste0("COL_plum_", Sys.Date(), ".png"), plot = Plum.plot, device = "png", path = figdir)
 
 plum.varve.plot <- Plum.plot+ #ggplot()+
   geom_ribbon(aes(y = AD.data$Depth/10,xmin = AD.data$c2.5-67,xmax = -67+AD.data$c97.5, fill = AD.data$Obs), alpha = 0.25)+
@@ -144,16 +154,16 @@ plum.varve.plot <- Plum.plot+ #ggplot()+
   #coord_flip()
 plum.varve.plot
 
-ggsave(filename = paste0("COL_plumVarve_", Sys.Date(), ".pdf"), plot = Plum.plot, device = "pdf", path = "D:/OneDrive for Business/OneDrive - Northern Arizona University/PhD thesis/Varves/Age-depth model/Figures/")
-ggsave(filename = paste0("COL_plumVarve_", Sys.Date(), ".png"), plot = Plum.plot, device = "png", path = "D:/OneDrive for Business/OneDrive - Northern Arizona University/PhD thesis/Varves/Age-depth model/Figures/")
+ggsave(filename = paste0("COL_plumVarve_", Sys.Date(), ".pdf"), plot = Plum.plot, device = "pdf", path = figdir)
+ggsave(filename = paste0("COL_plumVarve_", Sys.Date(), ".png"), plot = Plum.plot, device = "png", path = figdir)
 
-## From the serac package, calculate the other models
+## From the serac package, calculate lead models, datasets available at https://doi.org/10.6084/m9.figshare.17156702
 
-CRS <- read.table(file = "D:/OneDrive for Business/OneDrive - Northern Arizona University/PhD thesis/Varves/Age-depth model/PLUM and BACON combi/serac/Cores/Columbine_210Pb/Columbine_210Pb_CRS_interpolation.txt", header = T, col.names = c("Depth_avg","BestAD","MinAD","MaxAD","SAR","SAR_err"))
+CRS <- read.table(file = CRSfile, header = T, col.names = c("Depth_avg","BestAD","MinAD","MaxAD","SAR","SAR_err"))
 
-CIC <- read.table(file = "D:/OneDrive for Business/OneDrive - Northern Arizona University/PhD thesis/Varves/Age-depth model/PLUM and BACON combi/serac/Cores/Columbine_210Pb/Columbine_210Pb_CIC_interpolation.txt", header = T, col.names = c("Depth_avg","BestAD","MinAD","MaxAD","SAR","SAR_err"))
+CIC <- read.table(file = CICfile, header = T, col.names = c("Depth_avg","BestAD","MinAD","MaxAD","SAR","SAR_err"))
 
-CFCS <- read.table(file = "D:/OneDrive for Business/OneDrive - Northern Arizona University/PhD thesis/Varves/Age-depth model/PLUM and BACON combi/serac/Cores/Columbine_210Pb/Columbine_210Pb_CFCS_interpolation.txt", header = T, col.names = c("Depth_avg","BestAD","MinAD","MaxAD","SAR","SAR_err"))
+CFCS <- read.table(file = CFCSfile, header = T, col.names = c("Depth_avg","BestAD","MinAD","MaxAD","SAR","SAR_err"))
 
 all.lead <- rbind(CRS,CFCS) #rbind(CRS,CIC,CFCS)
 all.lead$Model <- c(rep("CRS",nrow(CRS)), rep("CFCS",nrow(CFCS))) #rep("CIC",nrow(CIC))
@@ -175,8 +185,8 @@ Pb.plots <- ggplot(all.lead)+
   ylab(label = "Depth (mm)")
 Pb.plots
 
-ggsave(filename = paste0("COL_Pb_", Sys.Date(), ".pdf"), plot = Pb.plots, device = "pdf", path = "D:/OneDrive for Business/OneDrive - Northern Arizona University/PhD thesis/Varves/Age-depth model/Figures/")
-ggsave(filename = paste0("COL_Pb_", Sys.Date(), ".png"), plot = Pb.plots, device = "png", path = "D:/OneDrive for Business/OneDrive - Northern Arizona University/PhD thesis/Varves/Age-depth model/Figures/")
+ggsave(filename = paste0("COL_Pb_", Sys.Date(), ".pdf"), plot = Pb.plots, device = "pdf", path = figdir)
+ggsave(filename = paste0("COL_Pb_", Sys.Date(), ".png"), plot = Pb.plots, device = "png", path = figdir)
 
 combine_models <- data.frame(Model_Obs = c(AD.data$Obs, all.lead$Model), Depth = c(AD.data$Depth,all.lead$Depth_avg), MinBP = c(AD.data$c2.5-67, all.lead$MinBP), MaxBP = c(AD.data$c97.5-67, all.lead$MaxBP), BestBP = c(AD.data$c50-67, all.lead$BestBP))
 
@@ -194,8 +204,8 @@ VarvesLeadPlot <- ggplot(combine_models)+
   scale_fill_manual(values = c("#7fc97f","#beaed4","#999999", "#56B4E9", "#E69F00"))
 VarvesLeadPlot
 
-ggsave(filename = paste0("COL_Varves_Pb_", Sys.Date(), ".pdf"), plot = VarvesLeadPlot, device = "pdf", path = "D:/OneDrive for Business/OneDrive - Northern Arizona University/PhD thesis/Varves/Age-depth model/Figures/")
-ggsave(filename = paste0("COL_Varves_Pb_", Sys.Date(), ".png"), plot = VarvesLeadPlot, device = "png", path = "D:/OneDrive for Business/OneDrive - Northern Arizona University/PhD thesis/Varves/Age-depth model/Figures/")
+ggsave(filename = paste0("COL_Varves_Pb_", Sys.Date(), ".pdf"), plot = VarvesLeadPlot, device = "pdf", path = figdir)
+ggsave(filename = paste0("COL_Varves_Pb_", Sys.Date(), ".png"), plot = VarvesLeadPlot, device = "png", path = figdir)
 
 plum.lead.plot <- Plum.plot +
   geom_ribbon(aes(y = all.lead$Depth_avg/10,xmin = all.lead$MinBP,xmax = all.lead$MaxBP, fill = all.lead$Model), alpha = 0.25)+
@@ -212,8 +222,8 @@ plum.lead.plot <- Plum.plot +
   #ylab(label = "Depth (mm)")
 plum.lead.plot
 
-ggsave(filename = paste0("COL_Plum_lead_", Sys.Date(), ".pdf"), plot = plum.lead.plot, device = "pdf", path = "D:/OneDrive for Business/OneDrive - Northern Arizona University/PhD thesis/Varves/Age-depth model/Figures/")
-ggsave(filename = paste0("COL_Plum_lead_", Sys.Date(), ".png"), plot = plum.lead.plot, device = "png", path = "D:/OneDrive for Business/OneDrive - Northern Arizona University/PhD thesis/Varves/Age-depth model/Figures/")
+ggsave(filename = paste0("COL_Plum_lead_", Sys.Date(), ".pdf"), plot = plum.lead.plot, device = "pdf", path = figdir)
+ggsave(filename = paste0("COL_Plum_lead_", Sys.Date(), ".png"), plot = plum.lead.plot, device = "png", path = figdir)
 
 
 all.age_models <- Plum.plot +
@@ -233,12 +243,12 @@ all.age_models <- Plum.plot +
   theme(aspect.ratio = 1)
 all.age_models
 
-ggsave(filename = paste0("COL_Plum_varve_lead_", Sys.Date(), ".pdf"), plot = all.age_models, device = "pdf", path = "D:/OneDrive for Business/OneDrive - Northern Arizona University/PhD thesis/Varves/Age-depth model/Figures/")
-ggsave(filename = paste0("COL_Plum_varve_lead_", Sys.Date(), ".png"), plot = all.age_models, device = "png", path = "D:/OneDrive for Business/OneDrive - Northern Arizona University/PhD thesis/Varves/Age-depth model/Figures/")
+ggsave(filename = paste0("COL_Plum_varve_lead_", Sys.Date(), ".pdf"), plot = all.age_models, device = "pdf", path = figdir)
+ggsave(filename = paste0("COL_Plum_varve_lead_", Sys.Date(), ".png"), plot = all.age_models, device = "png", path = figdir)
 
-# Plot raw Cs and Pb
+# Plot raw Cs and Pb 
 
-raw.Pb <- read.csv(file = "D:/OneDrive for Business/OneDrive - Northern Arizona University/PhD thesis/Varves/Age-depth model/Lead plots/raw_lead_cesium.csv", header = T)
+raw.Pb <- read.csv(file = Csfile, header = T)
 
 raw.Pb.m <- reshape2::melt(raw.Pb)
 
@@ -271,8 +281,8 @@ cesium.raw.plot
 raw.plot <- lead.raw.plot + cesium.raw.plot + plot_layout(nrow = 1)
 raw.plot
 
-ggsave(filename = paste0("raw_lead_", Sys.Date(), ".pdf"), plot = raw.plot, device = "pdf", path = "D:/OneDrive for Business/OneDrive - Northern Arizona University/PhD thesis/Varves/Age-depth model/Figures/")
-ggsave(filename = paste0("raw_lead_", Sys.Date(), ".png"), plot = raw.plot, device = "png", path = "D:/OneDrive for Business/OneDrive - Northern Arizona University/PhD thesis/Varves/Age-depth model/Figures/")
+ggsave(filename = paste0("raw_lead_", Sys.Date(), ".pdf"), plot = raw.plot, device = "pdf", path = figdir)
+ggsave(filename = paste0("raw_lead_", Sys.Date(), ".png"), plot = raw.plot, device = "png", path = figdir)
 
 # Final figure
 
@@ -283,8 +293,8 @@ final.plotb
 
 final.chronology.plot <- cowplot::plot_grid(final.plota ,final.plotb, nrow = 2)
 
-ggsave(filename = paste0("final_chrono_plot_", Sys.Date(), ".pdf"), plot = final.chronology.plot, device = "pdf", path = "D:/OneDrive for Business/OneDrive - Northern Arizona University/PhD thesis/Varves/Age-depth model/Figures/")
-ggsave(filename = paste0("final_chrono_plot_", Sys.Date(), ".png"), plot = final.chronology.plot, device = "png", path = "D:/OneDrive for Business/OneDrive - Northern Arizona University/PhD thesis/Varves/Age-depth model/Figures/")
+ggsave(filename = paste0("final_chrono_plot_", Sys.Date(), ".pdf"), plot = final.chronology.plot, device = "pdf", path = figdir)
+ggsave(filename = paste0("final_chrono_plot_", Sys.Date(), ".png"), plot = final.chronology.plot, device = "png", path = figdir)
 
 #### Now switch to multiple-cores-observer script
 #####
